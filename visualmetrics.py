@@ -39,6 +39,7 @@ import shutil
 import subprocess
 import tempfile
 
+
 # Globals
 options = None
 client_viewport = None
@@ -90,6 +91,14 @@ def video_to_frames(video, directory, force, orange_file, white_file, gray_file,
                         find_render_start(dir, orange_file, gray_file)
                         find_last_frame(dir, white_file)
                         adjust_frame_times(dir)
+
+                        # Do the cropping of images here.
+                        output_dir = dir + '_cropped'
+                        cmd = 'python ../crop_images.py {0} {1}'.format(dir, output_dir)
+                        subprocess.call(cmd.split())
+                        os.rename(dir, dir + '_uncropped')
+                        os.rename(output_dir, dir)
+
                         if timeline_file is not None and not multiple:
                             synchronize_to_timeline(dir, timeline_file)
                         eliminate_duplicate_frames(dir)
